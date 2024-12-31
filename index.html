@@ -4,26 +4,103 @@
 <head>
   <meta charset="utf-8">
   <title>体育大乐透</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #bod {
+      margin-top: 20px;
+    }
+
+    p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    p span {
+      display: inline-block;
+      margin: 0 5px;
+      padding: 5px 10px;
+      background-color: #f0f0f0;
+      border-radius: 3px;
+      min-width: 30px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
+  <input type="number" id="luckyNumber" placeholder="输入幸运数字 (1-35)" min="1" max="35">
   <button onclick="myFunction()">点我生成大乐透</button>
   <div id="bod"></div>
   <script>
     function myFunction() {
-      let arr = []
-      let doc = document.getElementById("bod")
-      doc.innerHTML = `<div></div>`
-      for (let i = 0; i < 5; i++) {
-        arr[i] = [[], []]
-        for (let j = 0; j < 5; j++) arr[i][0].push(Math.floor(Math.random() * 35) + 1)
-        for (let j = 0; j < 2; j++) arr[i][1].push(Math.floor(Math.random() * 12) + 1)
-      };
+      let numSets = prompt("请输入要生成的大乐透数量:", "5");
+      if (numSets === null || isNaN(numSets) || numSets <= 0) {
+        alert("请输入有效的数量");
+        return;
+      }
+      let luckyNumber = parseInt(document.getElementById("luckyNumber").value);
+      if (isNaN(luckyNumber) || luckyNumber < 1 || luckyNumber > 35) {
+        luckyNumber = null;
+      }
+      let arr = [];
+      let doc = document.getElementById("bod");
+      doc.innerHTML = `<div></div>`;
+      for (let i = 0; i < numSets; i++) {
+        arr[i] = [[], []];
+        while (arr[i][0].length < 5) {
+          let num = Math.floor(Math.random() * 35) + 1;
+          if (luckyNumber && Math.random() < 0.3) {
+            num = luckyNumber;
+          }
+          if (!arr[i][0].includes(num)) {
+            arr[i][0].push(num);
+          }
+        }
+        while (arr[i][1].length < 2) {
+          let num = Math.floor(Math.random() * 12) + 1;
+          if (!arr[i][1].includes(num)) {
+            arr[i][1].push(num);
+          }
+        }
+        arr[i][0].sort((a, b) => a - b);
+        arr[i][1].sort((a, b) => a - b);
+      }
       for (let i = 0; i < arr.length; i++) {
-        doc.innerHTML += `<p>`
-        // arr[i].forEach(element => element.length >= 5 ? doc.innerHTML += `[${element}] | ` : doc.innerHTML += `[${element}]`);
-        arr[i].forEach(element => doc.innerHTML += ` [${element}]`)
-        doc.innerHTML += `</p>`
+        doc.innerHTML += `<p>`;
+        arr[i].forEach((element, index) => {
+          element.forEach(num => doc.innerHTML += `<span>${num}</span> `);
+          if (index === 0) doc.innerHTML += ` | `;
+        });
+        doc.innerHTML += `</p>`;
       }
     }
   </script>
